@@ -16,6 +16,6 @@ typedef struct {
 
 void micro_set_focus(micro_app_t *app);
 void micro_set_output(out_target_t target);
-int micro_putchar(char c);
-int micro_puts(const char *s);
+void micro_putchar(char c);
+void micro_puts(const char *s);
 void micro_printf(const char *format, ...);

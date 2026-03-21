@@ -2,3 +2,4 @@ build/
 .cache/
 .cache
 build
+.DS_Store
