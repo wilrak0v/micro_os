@@ -1,3 +1,4 @@
+#include "micro_dwm/micro_dwm.h"
 #include "micro_lib/micro_lib.h"
 #include "pico/stdlib.h"
 #include "lvgl/lvgl.h"
@@ -35,11 +36,18 @@ int main()
 
     micro_dwm_init();
     micro_set_output(OUT_SERIAL);
+    int desktop = 0;
 
     while (1)
     {
         uint32_t ms_until_next = lv_timer_handler();
-        micro_putchar('W');
+        int c = getchar_timeout_us(0);
+        if (c != PICO_ERROR_TIMEOUT) {
+            if (c >= '0' && c <= '2') {
+                int target = c - '0';
+                micro_change_desktop(target);
+            }
+        }
         if (ms_until_next > 0) {
             uint32_t sleep_time = (ms_until_next > 5) ? 5 : ms_until_next;
             sleep_ms(sleep_time);

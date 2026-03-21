@@ -19,9 +19,9 @@ lv_obj_t *status_label;
 lv_obj_t *tile_container;
 int current_desktop = 0;
 
-void create_wallpaper(void)
+void create_wallpaper(lv_obj_t *parent)
 {
-    lv_obj_t *bg = lv_obj_create(lv_scr_act());
+    lv_obj_t *bg = lv_obj_create(parent);
     lv_obj_set_size(bg, 320, 240);
     lv_obj_center(bg);
 
@@ -79,47 +79,67 @@ void create_wallpaper(void)
 
 void micro_dwm_init(void)
 {
-  create_wallpaper();
-  micro_dwm_bar_init();
+    tile_container = lv_tileview_create(lv_scr_act());
+    lv_obj_t *desktop0 = lv_tileview_add_tile(tile_container, 0, 0, LV_DIR_RIGHT);
+    lv_obj_t *desktop1 = lv_tileview_add_tile(tile_container, 1, 0, LV_DIR_HOR);
+    lv_obj_t *desktop2 = lv_tileview_add_tile(tile_container, 2, 0, LV_DIR_LEFT);
+    lv_obj_set_tile_id(tile_container, current_desktop, 0, LV_ANIM_ON);
+    lv_obj_set_scrollbar_mode(tile_container, LV_SCROLLBAR_MODE_OFF);
+
+    create_wallpaper(desktop0);
+    create_wallpaper(desktop1);
+    create_wallpaper(desktop2);
+    micro_dwm_bar_init(desktop0);
+    current_desktop++;
+    micro_dwm_bar_init(desktop1);
+    current_desktop++;
+    micro_dwm_bar_init(desktop2);
+    current_desktop = 0;
 }
 
-void micro_dwm_bar_init(void)
+void micro_dwm_bar_init(lv_obj_t *parent)
 {
-  status_bar = lv_obj_create(lv_scr_act());
-  lv_obj_set_size(status_bar, LV_PCT(100), 20);
-  lv_obj_set_pos(status_bar, 0, 0);
+    status_bar = lv_obj_create(parent);
+    lv_obj_set_size(status_bar, LV_PCT(100), 20);
+    lv_obj_set_pos(status_bar, 0, 0);
 
-  lv_obj_set_style_bg_color(status_bar, lv_color_hex(0x222222), 0);
-  lv_obj_set_style_radius(status_bar, 0, 0);
-  lv_obj_set_style_border_width(status_bar, 0, 0);
-  lv_obj_set_style_pad_all(status_bar, 2, 0);
+    lv_obj_set_style_bg_color(status_bar, lv_color_hex(0x222222), 0);
+    lv_obj_set_style_radius(status_bar, 0, 0);
+    lv_obj_set_style_border_width(status_bar, 0, 0);
+    lv_obj_set_style_pad_all(status_bar, 2, 0);
 
-  lv_obj_t *desktop_label = lv_label_create(status_bar);
-  char buffer[32];
-  switch (current_desktop) {
-  case -1:
-    current_desktop = MAX_DESKTOP;
-    break;
-  case 0:
-    lv_strcpy(buffer, "micro_os | [0]  1  2");
-    break;
-  case 1:
-    lv_strcpy(buffer, "micro_os |  0  [1]  0");
-    break;
-  case 2:
-    lv_strcpy(buffer, "micro_os |  0   1  [0]");
-    break;
-  default:
-    current_desktop = 0;
-    break;
-  }
-  lv_label_set_text(desktop_label, buffer);
-  lv_obj_set_style_text_color(desktop_label, lv_color_hex(0xFFFFFF), 0);
+    lv_obj_t *desktop_label = lv_label_create(status_bar);
+    char buffer[32];
+    switch (current_desktop) {
+      case -1:
+        current_desktop = MAX_DESKTOP;
+        break;
+    case 0:
+        lv_strcpy(buffer, "micro_os | [0]  1  2");
+        break;
+    case 1:
+        lv_strcpy(buffer, "micro_os |  0  [1]  2");
+        break;
+    case 2:
+        lv_strcpy(buffer, "micro_os |  0   1  [2]");
+        break;
+    default:
+        current_desktop = 0;
+        break;
+    }
+    lv_label_set_text(desktop_label, buffer);
+    lv_obj_set_style_text_color(desktop_label, lv_color_hex(0xFFFFFF), 0);
 
-  lv_obj_t *icon_label = lv_label_create(status_bar);
-  lv_label_set_text(icon_label, LV_SYMBOL_BATTERY_3 " " LV_SYMBOL_WIFI);
-  lv_obj_set_x(icon_label, LV_PCT(85));
-  lv_obj_set_style_text_color(icon_label, lv_color_hex(0xFFFFFF), 0);
+    lv_obj_t *icon_label = lv_label_create(status_bar);
+    lv_label_set_text(icon_label, LV_SYMBOL_BATTERY_3 " " LV_SYMBOL_WIFI);
+    lv_obj_set_x(icon_label, LV_PCT(85));
+    lv_obj_set_style_text_color(icon_label, lv_color_hex(0xFFFFFF), 0);
+}
+
+void micro_change_desktop(int desktop)
+{
+    current_desktop = desktop % (MAX_DESKTOP  + 1);
+    lv_obj_set_tile_id(tile_container, current_desktop, 0, LV_ANIM_ON);
 }
 
 micro_app_t *create_micro_app(const char *title) {

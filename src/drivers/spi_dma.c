@@ -23,8 +23,7 @@ dma_channel_config dma_config;
 
 void init_SPI()
 {
-    // Fixer la vitesse à 30 MHz, parfait pour un ILI9341
-    spi_init(SPI_PORT, 50000000);
+    spi_init(SPI_PORT, 62000000);
 
     gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
     gpio_set_function(PIN_SCK,  GPIO_FUNC_SPI);
