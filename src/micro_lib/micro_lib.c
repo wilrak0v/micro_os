@@ -5,6 +5,12 @@
 #include <stdio.h>
 
 static out_target_t current_target = OUT_SERIAL;
+static micro_app_t *focus = NULL;
+
+void micro_set_focus(micro_app_t *app)
+{
+    focus = app;
+}
 
 void micro_set_output(out_target_t target)
 {
@@ -20,6 +26,7 @@ int micro_putchar(char c)
 
     if (current_target == OUT_SCREEN || current_target == OUT_BOTH)
     {
-        micro_term_add_char(c);
+        if (focus != NULL && focus->content != NULL)
+            micro_term_add_char(c, focus);
     }
 }

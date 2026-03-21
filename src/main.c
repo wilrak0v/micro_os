@@ -1,7 +1,9 @@
 #include "micro_lib/micro_lib.h"
 #include "pico/stdlib.h"
 #include "lvgl/lvgl.h"
+#include <pico/time.h>
 #include <src/font/lv_symbol_def.h>
+#include <src/misc/lv_timer.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include "spi_dma.h"
@@ -9,6 +11,7 @@
 #include "board.h"
 #include "micro_term.h"
 #include "micro_lib.h"
+#include "micro_dwm.h"
 
 uint32_t my_tick_get_cb(void) {
     return time_us_32() / 1000; // Renvoie le temps en millisecondes
@@ -30,21 +33,17 @@ int main()
     lv_display_set_flush_cb(disp, my_disp_flush);
     lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565_SWAPPED);
 
-    // init le term
-    micro_term_init();
-    sleep_ms(500);
-    micro_putchar('c');
-    sleep_ms(500);
-    micro_set_output(OUT_SCREEN);
-    micro_putchar('d');
-    sleep_ms(1500);
-    micro_set_output(OUT_BOTH);
+    micro_dwm_init();
+    micro_set_output(OUT_SERIAL);
 
     while (1)
     {
-        lv_timer_handler();
-        micro_putchar('m');
-        sleep_ms(100);
+        uint32_t ms_until_next = lv_timer_handler();
+        micro_putchar('W');
+        if (ms_until_next > 0) {
+            uint32_t sleep_time = (ms_until_next > 5) ? 5 : ms_until_next;
+            sleep_ms(sleep_time);
+        }
     }
     return 0;
 }
