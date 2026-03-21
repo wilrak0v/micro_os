@@ -13,6 +13,8 @@ add_executable(micro_os
     src/main.c
     src/drivers/spi_dma.c
     src/drivers/screen.c
+    src/micro_lib/micro_lib.c
+    src/micro_term/micro_term.c
 )
 
 pico_enable_stdio_usb(micro_os 1)
@@ -34,6 +36,8 @@ target_include_directories(micro_os PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     src/
     src/drivers
+    src/micro_lib
+    src/micro_term
 )
 
 pico_add_extra_outputs(micro_os)
