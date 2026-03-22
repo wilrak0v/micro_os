@@ -7,8 +7,10 @@
 #include <src/font/lv_symbol_def.h>
 #include <src/micro_dwm/micro_dwm.h>
 #include <src/micro_lib/micro_lib.h>
+#include <src/misc/lv_area.h>
 #include <src/stdlib/lv_string.h>
 #include <src/widgets/label/lv_label.h>
+#include <src/widgets/tileview/lv_tileview.h>
 #include <src/widgets/win/lv_win.h>
 #include <stdlib.h>
 
@@ -17,6 +19,7 @@
 lv_obj_t *status_bar;
 lv_obj_t *status_label;
 lv_obj_t *tile_container;
+dwm_desktop_t desktops[3];
 int current_desktop = 0;
 
 void create_wallpaper(lv_obj_t *parent)
@@ -80,20 +83,18 @@ void create_wallpaper(lv_obj_t *parent)
 void micro_dwm_init(void)
 {
     tile_container = lv_tileview_create(lv_scr_act());
-    lv_obj_t *desktop0 = lv_tileview_add_tile(tile_container, 0, 0, LV_DIR_RIGHT);
-    lv_obj_t *desktop1 = lv_tileview_add_tile(tile_container, 1, 0, LV_DIR_HOR);
-    lv_obj_t *desktop2 = lv_tileview_add_tile(tile_container, 2, 0, LV_DIR_LEFT);
+    desktops[0].desktop = lv_tileview_add_tile(tile_container, 0, 0, LV_DIR_RIGHT);
+    desktops[1].desktop = lv_tileview_add_tile(tile_container, 1, 0, LV_DIR_HOR);
+    desktops[2].desktop = lv_tileview_add_tile(tile_container, 2, 0, LV_DIR_LEFT);
     lv_obj_set_tile_id(tile_container, current_desktop, 0, LV_ANIM_ON);
     lv_obj_set_scrollbar_mode(tile_container, LV_SCROLLBAR_MODE_OFF);
 
-    create_wallpaper(desktop0);
-    create_wallpaper(desktop1);
-    create_wallpaper(desktop2);
-    micro_dwm_bar_init(desktop0);
-    current_desktop++;
-    micro_dwm_bar_init(desktop1);
-    current_desktop++;
-    micro_dwm_bar_init(desktop2);
+    for (int i = 0; i < 3; i ++)
+    {
+        current_desktop = i;
+        create_wallpaper(desktops[i].desktop);
+        micro_dwm_bar_init(desktops[i].desktop);
+    }
     current_desktop = 0;
 }
 
@@ -142,31 +143,9 @@ void micro_change_desktop(int desktop)
     lv_obj_set_tile_id(tile_container, current_desktop, 0, LV_ANIM_ON);
 }
 
-micro_app_t *create_micro_app(const char *title) {
+micro_app_t *create_micro_app(const char *title)
+{
   micro_app_t *app = malloc(sizeof(micro_app_t));
-
-  app->window = lv_obj_create(tile_container);
-  lv_obj_set_flex_grow(app->window, 1);
-  lv_obj_set_flex_align(app->window, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
-                        LV_FLEX_ALIGN_START);
-  lv_obj_set_height(app->window, LV_PCT(100));
-  lv_obj_set_scroll_dir(app->window, LV_DIR_NONE);
-
-  lv_obj_set_style_radius(app->window, 0, 0);
-  lv_obj_set_style_border_width(app->window, 1, 0);
-  lv_obj_set_style_border_color(app->window, lv_color_hex(0x444444), 0);
-  lv_obj_set_style_bg_color(app->window, lv_color_hex(0x000000), 0);
-  lv_obj_set_style_pad_all(app->window, 0, 0);
-  lv_obj_set_style_pad_gap(app->window, 0, 0);
-
-  app->content = lv_textarea_create(app->window);
-  lv_obj_set_size(app->content, LV_PCT(100), LV_PCT(100));
-  lv_obj_set_style_bg_color(app->content, lv_color_hex(0x000000), 0);
-  lv_obj_set_style_border_width(app->content, 0, 0);
-  lv_obj_set_style_text_color(app->content, lv_color_hex(0x00FF00), 0);
-  lv_obj_set_style_pad_all(app->content, 0, 0);
-  lv_obj_set_style_border_width(app->content, 0, 0);
-  lv_obj_set_y(app->content, -20);
 
   app->title = title;
   return app;

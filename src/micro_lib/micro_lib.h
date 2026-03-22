@@ -9,7 +9,6 @@ typedef enum {
 } out_target_t;
 
 typedef struct {
-    lv_obj_t *window;
     lv_obj_t *content;
     const char *title;
 } micro_app_t;
