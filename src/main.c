@@ -35,10 +35,14 @@ int main()
     lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565_SWAPPED);
 
     micro_dwm_init();
-    micro_set_output(OUT_SERIAL);
     micro_app_t *my_app = create_micro_app("First application");
-    micro_app_t *iterm = create_micro_app("iTerm");
+    micro_app_t *iterm = create_micro_term("iTerm");
+    micro_set_output(OUT_SCREEN);
     int desktop = 0;
+    micro_puts("Welcome in micro_os!\n");
+    micro_puts("You are in the terminal\n");
+    micro_printf("You are on the desktop %d\n", desktop);
+    micro_puts("There is 3 virtual desktop, like DWM\n");
 
     while (1)
     {

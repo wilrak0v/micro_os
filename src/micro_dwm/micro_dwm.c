@@ -4,6 +4,7 @@
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style.h>
+#include <src/core/lv_obj_style_gen.h>
 #include <src/font/lv_symbol_def.h>
 #include <src/layouts/flex/lv_flex.h>
 #include <src/micro_dwm/micro_dwm.h>
@@ -165,10 +166,14 @@ void micro_change_desktop(int desktop)
 micro_app_t *create_micro_app(const char *title)
 {
   micro_app_t *app = malloc(sizeof(micro_app_t));
+  micro_set_focus(app);
   app->window = lv_win_create(desktops[current_desktop].window_area);
   lv_win_add_title(app->window, title);
   lv_obj_set_height(app->window, LV_PCT(100));
   lv_obj_set_flex_grow(app->window, 1);
+  lv_obj_set_style_border_width(app->window, 1, 0);
+  lv_obj_set_style_border_color(app->window, lv_color_hex(0x2F3542), 0);
+
   lv_obj_t *header = lv_win_get_header(app->window);
   lv_obj_set_height(header, 20);
 

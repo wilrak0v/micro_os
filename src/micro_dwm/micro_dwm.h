@@ -6,7 +6,6 @@
 typedef struct {
     lv_obj_t *desktop;
     lv_obj_t *window_area;
-    lv_obj_t *focus;
     int window_count;
 } dwm_desktop_t;
 
