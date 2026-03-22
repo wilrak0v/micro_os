@@ -28,7 +28,7 @@ void micro_putchar(char c)
 
     if (current_target == OUT_SCREEN || current_target == OUT_BOTH)
     {
-        if (focus != NULL && focus->content != NULL)
+        if (focus != NULL && focus->window != NULL)
             micro_term_add_char(c, focus);
     }
 }

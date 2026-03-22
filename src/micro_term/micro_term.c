@@ -20,16 +20,4 @@ micro_app_t *create_micro_term(const char *title)
 
 void micro_term_add_char(char c, micro_app_t* term)
 {
-    if (!term || !term->content) return;
-    const char *txt = lv_textarea_get_text(term->content);
-    size_t len = strlen(txt);
-    if (len > 500)
-    {
-        lv_textarea_set_cursor_pos(term->content, 0);
-        for (int i = 0; i < 200; i++)
-            lv_textarea_delete_char_forward(term->content);
-        lv_textarea_set_cursor_pos(term->content, LV_TEXTAREA_CURSOR_LAST);
-    }
-    char buf[2] = {c, '\0'};
-    lv_textarea_add_text(term->content, buf);
 }

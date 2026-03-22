@@ -5,6 +5,7 @@
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style.h>
 #include <src/font/lv_symbol_def.h>
+#include <src/layouts/flex/lv_flex.h>
 #include <src/micro_dwm/micro_dwm.h>
 #include <src/micro_lib/micro_lib.h>
 #include <src/misc/lv_area.h>
@@ -15,6 +16,8 @@
 #include <stdlib.h>
 
 #define MAX_DESKTOP 2
+#define STATUS_BAR_SIZE 20
+#define WINDOW_AREA_SIZE 240 - STATUS_BAR_SIZE
 
 lv_obj_t *status_bar;
 lv_obj_t *status_label;
@@ -80,6 +83,21 @@ void create_wallpaper(lv_obj_t *parent)
     lv_obj_set_style_bg_opa(accent, LV_OPA_60, 0);
 }
 
+void init_window_area(int id)
+{
+    desktops[id].window_area = lv_obj_create(desktops[id].desktop);
+    lv_obj_set_size(desktops[id].window_area, 320, WINDOW_AREA_SIZE);
+    lv_obj_set_pos(desktops[id].window_area, 0, STATUS_BAR_SIZE);
+    lv_obj_set_style_bg_opa(desktops[id].window_area, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(desktops[id].window_area, 0, 0);
+    lv_obj_set_layout(desktops[id].window_area, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(desktops[id].window_area, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_align(desktops[id].window_area, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_set_style_pad_all(desktops[id].window_area, 0, 0);
+    lv_obj_set_style_pad_column(desktops[id].window_area, 0, 0);
+    lv_obj_set_style_pad_row(desktops[id].window_area, 0, 0);
+}
+
 void micro_dwm_init(void)
 {
     tile_container = lv_tileview_create(lv_scr_act());
@@ -94,6 +112,7 @@ void micro_dwm_init(void)
         current_desktop = i;
         create_wallpaper(desktops[i].desktop);
         micro_dwm_bar_init(desktops[i].desktop);
+        init_window_area(i);
     }
     current_desktop = 0;
 }
@@ -101,7 +120,7 @@ void micro_dwm_init(void)
 void micro_dwm_bar_init(lv_obj_t *parent)
 {
     status_bar = lv_obj_create(parent);
-    lv_obj_set_size(status_bar, LV_PCT(100), 20);
+    lv_obj_set_size(status_bar, LV_PCT(100), STATUS_BAR_SIZE);
     lv_obj_set_pos(status_bar, 0, 0);
 
     lv_obj_set_style_bg_color(status_bar, lv_color_hex(0x222222), 0);
@@ -146,7 +165,14 @@ void micro_change_desktop(int desktop)
 micro_app_t *create_micro_app(const char *title)
 {
   micro_app_t *app = malloc(sizeof(micro_app_t));
+  app->window = lv_win_create(desktops[current_desktop].window_area);
+  lv_win_add_title(app->window, title);
+  lv_obj_set_height(app->window, LV_PCT(100));
+  lv_obj_set_flex_grow(app->window, 1);
+  lv_obj_t *header = lv_win_get_header(app->window);
+  lv_obj_set_height(header, 20);
 
   app->title = title;
+  desktops[current_desktop].window_count++;
   return app;
 }

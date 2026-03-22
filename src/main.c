@@ -36,6 +36,8 @@ int main()
 
     micro_dwm_init();
     micro_set_output(OUT_SERIAL);
+    micro_app_t *my_app = create_micro_app("First application");
+    micro_app_t *iterm = create_micro_app("iTerm");
     int desktop = 0;
 
     while (1)
@@ -46,7 +48,7 @@ int main()
             if (c >= '0' && c <= '2') {
                 int target = c - '0';
                 micro_change_desktop(target);
-            }
+            } else if (c == 'a') create_micro_app("T");
         }
         if (ms_until_next > 0) {
             uint32_t sleep_time = (ms_until_next > 5) ? 5 : ms_until_next;
