@@ -35,8 +35,8 @@ void micro_putchar(char c)
 
 void micro_puts(const char *s)
 {
-    while (*s++)
-        micro_putchar(*s);
+    while (*s)
+        micro_putchar(*s++);
 }
 
 void micro_printf(const char *format, ...)
