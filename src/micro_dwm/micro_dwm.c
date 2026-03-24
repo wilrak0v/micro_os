@@ -11,13 +11,15 @@
 #include <src/micro_lib/micro_lib.h>
 #include <src/misc/lv_area.h>
 #include <src/stdlib/lv_string.h>
+#include <src/themes/theme.h>
 #include <src/widgets/label/lv_label.h>
 #include <src/widgets/tileview/lv_tileview.h>
 #include <src/widgets/win/lv_win.h>
 #include <stdlib.h>
 
-#define MAX_DESKTOP 2
+#define MAX_DESKTOP 3
 #define STATUS_BAR_SIZE 20
+#define MAX_APPS 6
 #define WINDOW_AREA_SIZE 240 - STATUS_BAR_SIZE
 
 lv_obj_t *status_bar;
@@ -25,6 +27,8 @@ lv_obj_t *status_label;
 lv_obj_t *tile_container;
 dwm_desktop_t desktops[3];
 int current_desktop = 0;
+micro_app_t *apps[MAX_APPS];
+int app_ptr = 0;
 
 void create_wallpaper(lv_obj_t *parent)
 {
@@ -101,6 +105,7 @@ void init_window_area(int id)
 
 void micro_dwm_init(void)
 {
+    init_themes();
     tile_container = lv_tileview_create(lv_scr_act());
     desktops[0].desktop = lv_tileview_add_tile(tile_container, 0, 0, LV_DIR_RIGHT);
     desktops[1].desktop = lv_tileview_add_tile(tile_container, 1, 0, LV_DIR_HOR);
@@ -159,25 +164,85 @@ void micro_dwm_bar_init(lv_obj_t *parent)
 
 void micro_change_desktop(int desktop)
 {
-    current_desktop = desktop % (MAX_DESKTOP  + 1);
+    current_desktop = desktop % MAX_DESKTOP;
     lv_obj_set_tile_id(tile_container, current_desktop, 0, LV_ANIM_ON);
+}
+
+void micro_set_focus(micro_app_t *app)
+{
+    if (app == NULL) return;
+    if (focus != NULL) lv_obj_set_style_border_color(focus->window, current_theme->border_inactive, 0);
+    focus = app;
+    lv_obj_set_style_border_color(focus->window, current_theme->border_active, 0);
+    micro_change_desktop(app->desktop);
 }
 
 micro_app_t *create_micro_app(const char *title)
 {
-  micro_app_t *app = malloc(sizeof(micro_app_t));
-  micro_set_focus(app);
-  app->window = lv_win_create(desktops[current_desktop].window_area);
-  lv_win_add_title(app->window, title);
-  lv_obj_set_height(app->window, LV_PCT(100));
-  lv_obj_set_flex_grow(app->window, 1);
-  lv_obj_set_style_border_width(app->window, 1, 0);
-  lv_obj_set_style_border_color(app->window, lv_color_hex(0x2F3542), 0);
+    if (app_ptr > MAX_APPS - 1) return NULL;
+    micro_app_t *app = lv_malloc(sizeof(micro_app_t));
+    app->window = lv_win_create(desktops[current_desktop].window_area);
+    lv_win_add_title(app->window, title);
+    lv_obj_set_height(app->window, LV_PCT(100));
+    lv_obj_set_flex_grow(app->window, 1);
+    lv_obj_set_style_border_width(app->window, 1, 0);
+    lv_obj_set_style_border_color(app->window, current_theme->border_inactive, 0);
+    lv_obj_set_style_radius(app->window, 5, 0);
 
-  lv_obj_t *header = lv_win_get_header(app->window);
-  lv_obj_set_height(header, 20);
+    lv_obj_t *header = lv_win_get_header(app->window);
+    lv_obj_set_height(header, 20);
+    lv_obj_set_style_bg_color(header, current_theme->win_header, 0);
+    lv_obj_set_style_text_color(header, current_theme->text, 0);
 
-  app->title = title;
-  desktops[current_desktop].window_count++;
-  return app;
+    lv_obj_t *content = lv_win_get_content(app->window);
+    lv_obj_set_style_bg_color(content, current_theme->win_content, 0);
+    lv_obj_set_style_text_color(content, current_theme->text, 0);
+
+    app->title = lv_strdup(title);
+    desktops[current_desktop].window_count++;
+    app_ptr %= MAX_APPS;
+    app->id = app_ptr;
+    app->desktop = current_desktop;
+    apps[app_ptr++] = app;
+    micro_set_focus(app);
+    return app;
+}
+
+void close_micro_app(micro_app_t *app)
+{
+    if (app == NULL) return;
+
+    int found_idx = -1;
+    for(int i = 0; i < MAX_APPS; i++) {
+        if(apps[i] == app) {
+            found_idx = i;
+            break;
+        }
+    }
+
+    if(found_idx != -1) {
+        for(int i = found_idx; i < MAX_APPS - 1; i++) {
+            apps[i] = apps[i+1];
+        }
+        apps[MAX_APPS - 1] = NULL;
+
+        app_ptr--;
+
+        if(desktops[app->desktop].window_count > 0) {
+            desktops[app->desktop].window_count--;
+        }
+    }
+
+    if(focus == app) focus = NULL;
+
+    lv_obj_del_async(app->window);
+    lv_free(app->title);
+    lv_free(app);
+}
+
+void close_last_app()
+{
+    if (app_ptr > 0) {
+        close_micro_app(apps[app_ptr - 1]);
+    }
 }

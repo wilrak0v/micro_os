@@ -7,12 +7,9 @@
 #include "lvgl/lvgl.h"
 
 static out_target_t current_target = OUT_SERIAL;
-static micro_app_t *focus = NULL;
+micro_app_t *focus = NULL;
 
-void micro_set_focus(micro_app_t *app)
-{
-    focus = app;
-}
+
 
 void micro_set_output(out_target_t target)
 {

@@ -3,13 +3,21 @@
 #include "micro_lib.h"
 #include "lvgl/lvgl.h"
 
+#define MAX_DESKTOP 3
+#define MAX_APPS 6
+
 typedef struct {
     lv_obj_t *desktop;
     lv_obj_t *window_area;
     int window_count;
 } dwm_desktop_t;
 
+
+
+void micro_set_focus(micro_app_t *app);
 void micro_dwm_init(void);
 void micro_dwm_bar_init(lv_obj_t *parent);
 void micro_change_desktop(int desktop);
 micro_app_t *create_micro_app(const char *title);
+void close_micro_app(micro_app_t *app);
+void close_last_app();

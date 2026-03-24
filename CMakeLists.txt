@@ -16,6 +16,7 @@ add_executable(micro_os
     src/micro_lib/micro_lib.c
     src/micro_term/micro_term.c
     src/micro_dwm/micro_dwm.c
+    src/themes/theme.c
 )
 
 pico_enable_stdio_usb(micro_os 1)
@@ -40,6 +41,7 @@ target_include_directories(micro_os PRIVATE
     src/micro_lib
     src/micro_term
     src/micro_dwm
+    src/themes
 )
 
 pico_add_extra_outputs(micro_os)

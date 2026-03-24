@@ -10,10 +10,13 @@ typedef enum {
 
 typedef struct {
     lv_obj_t *window;
-    const char *title;
+    int id;
+    int desktop;
+    char *title;
 } micro_app_t;
 
-void micro_set_focus(micro_app_t *app);
+extern micro_app_t *focus;
+
 void micro_set_output(out_target_t target);
 void micro_putchar(char c);
 void micro_puts(const char *s);
