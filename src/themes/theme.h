@@ -14,5 +14,7 @@ extern dwm_theme_t dark_theme;
 extern dwm_theme_t light_theme;
 extern dwm_theme_t *current_theme;
 
+LV_FONT_DECLARE(jb_mono_14);
+
 void init_themes(void);
 void dwm_theme_toggle(void);

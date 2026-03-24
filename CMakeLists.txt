@@ -17,6 +17,7 @@ add_executable(micro_os
     src/micro_term/micro_term.c
     src/micro_dwm/micro_dwm.c
     src/themes/theme.c
+    src/jb_mono_14.c
 )
 
 pico_enable_stdio_usb(micro_os 1)

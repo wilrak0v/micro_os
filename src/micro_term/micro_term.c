@@ -17,6 +17,7 @@
 #include <src/widgets/textarea/lv_textarea.h>
 
 #define TERM_SIZE 1024
+LV_FONT_DECLARE(jb_mono_14);
 
 micro_app_t *create_micro_term(const char *title)
 {
@@ -32,7 +33,7 @@ micro_app_t *create_micro_term(const char *title)
     lv_obj_set_style_margin_all(ta, 0, 0);
     lv_obj_set_style_pad_all(ta, 3, 0);
     lv_obj_set_size(ta, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_text_font(ta, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_font(ta, &jb_mono_14, 0);
     lv_obj_set_style_bg_color(ta, current_theme->win_header, 0);
     lv_obj_set_style_text_color(ta, current_theme->text, 0);
 

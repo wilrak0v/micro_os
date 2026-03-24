@@ -36,17 +36,14 @@ int main()
     lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565_SWAPPED);
 
     micro_dwm_init();
-    micro_app_t *my_app = create_micro_term("First application");
-    micro_app_t *iterm = create_micro_term("iTerm");
-    micro_set_focus(my_app);
+    micro_app_t *iterm = create_micro_term("Tminal");
     micro_set_output(OUT_SCREEN);
-    int desktop = 0;
-    micro_puts("Welcome in micro_os!\n");
-    micro_puts("You are in the terminal\n");
-    micro_printf("You are on the desktop %d\n", desktop);
-    micro_puts("There is 3 virtual desktop, like DWM\n");
-    micro_set_focus(iterm);
-    micro_puts("Hi everyone");
+    micro_puts("~ $ fastfetch\n");
+    micro_puts(".-.-.-..-.,-.\n");
+    micro_puts("| | | || . < \n");
+    micro_puts("`-----'`-'`-'\n");
+    micro_puts("CPU : Pico 2\nScreen : ILI9341 320x240\nOS : micro_os\nFont : JetBrains Mono 14\nBest language : C\n");
+    micro_puts("~ $ _");
 
     while (1)
     {
@@ -56,7 +53,7 @@ int main()
             if (c >= '0' && c <= '2') {
                 int target = c - '0';
                 micro_change_desktop(target);
-            } else if (c == 'a') create_micro_app("T");
+            } else if (c == 'a') create_micro_term("Tminal");
             else if (c == 'c') micro_set_focus(iterm);
             else if (c == 'q') close_last_app();
             else if (c == 't') dwm_theme_toggle();

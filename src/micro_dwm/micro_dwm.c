@@ -133,21 +133,23 @@ void micro_dwm_bar_init(lv_obj_t *parent)
     lv_obj_set_style_radius(status_bar, 0, 0);
     lv_obj_set_style_border_width(status_bar, 0, 0);
     lv_obj_set_style_pad_all(status_bar, 2, 0);
+    lv_obj_set_style_text_font(status_bar, &jb_mono_14, 0);
 
     lv_obj_t *desktop_label = lv_label_create(status_bar);
+    lv_obj_set_style_text_font(desktop_label, &jb_mono_14, 0);
     char buffer[32];
     switch (current_desktop) {
       case -1:
         current_desktop = MAX_DESKTOP;
         break;
     case 0:
-        lv_strcpy(buffer, "micro_os | [0]  1  2");
+        lv_strcpy(buffer, "micro_os | [0] 1  2");
         break;
     case 1:
-        lv_strcpy(buffer, "micro_os |  0  [1]  2");
+        lv_strcpy(buffer, "micro_os |  0 [1] 2");
         break;
     case 2:
-        lv_strcpy(buffer, "micro_os |  0   1  [2]");
+        lv_strcpy(buffer, "micro_os |  0  1 [2]");
         break;
     default:
         current_desktop = 0;
@@ -170,7 +172,7 @@ void micro_change_desktop(int desktop)
 
 void micro_set_focus(micro_app_t *app)
 {
-    if (app == NULL) return;
+    if (app == NULL || app->window == NULL) return;
     if (focus != NULL) lv_obj_set_style_border_color(focus->window, current_theme->border_inactive, 0);
     focus = app;
     lv_obj_set_style_border_color(focus->window, current_theme->border_active, 0);
@@ -183,18 +185,21 @@ micro_app_t *create_micro_app(const char *title)
     micro_app_t *app = lv_malloc(sizeof(micro_app_t));
     app->window = lv_win_create(desktops[current_desktop].window_area);
     lv_win_add_title(app->window, title);
+    lv_obj_set_style_text_font(app->window, &jb_mono_14, 0);
     lv_obj_set_height(app->window, LV_PCT(100));
     lv_obj_set_flex_grow(app->window, 1);
     lv_obj_set_style_border_width(app->window, 1, 0);
     lv_obj_set_style_border_color(app->window, current_theme->border_inactive, 0);
-    lv_obj_set_style_radius(app->window, 5, 0);
+    lv_obj_set_style_radius(app->window, 4, 0);
 
     lv_obj_t *header = lv_win_get_header(app->window);
     lv_obj_set_height(header, 20);
+    lv_obj_set_style_text_font(header, &jb_mono_14, 0);
     lv_obj_set_style_bg_color(header, current_theme->win_header, 0);
     lv_obj_set_style_text_color(header, current_theme->text, 0);
 
     lv_obj_t *content = lv_win_get_content(app->window);
+    lv_obj_set_style_text_font(content, &jb_mono_14, 0);
     lv_obj_set_style_bg_color(content, current_theme->win_content, 0);
     lv_obj_set_style_text_color(content, current_theme->text, 0);
 
