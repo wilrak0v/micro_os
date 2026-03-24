@@ -192,6 +192,10 @@ micro_app_t *create_micro_app(const char *title)
     lv_obj_set_style_border_color(app->window, current_theme->border_inactive, 0);
     lv_obj_set_style_radius(app->window, 4, 0);
 
+    lv_obj_t *btn = lv_win_add_button(app->window, LV_SYMBOL_CLOSE, 14);
+    lv_obj_set_height(btn, 14);
+    lv_obj_set_style_radius(btn, 2, 0);
+
     lv_obj_t *header = lv_win_get_header(app->window);
     lv_obj_set_height(header, 20);
     lv_obj_set_style_text_font(header, &jb_mono_14, 0);
