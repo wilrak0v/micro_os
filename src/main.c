@@ -1,5 +1,6 @@
 #include "micro_dwm/micro_dwm.h"
 #include "micro_lib/micro_lib.h"
+#include "micro_term/micro_term.h"
 #include "pico/stdlib.h"
 #include "lvgl/lvgl.h"
 #include <pico/time.h>
@@ -14,9 +15,11 @@
 #include "micro_lib.h"
 #include "micro_dwm.h"
 #include "themes/theme.h"
+#include "mouse.h"
+#include <math.h>
 
 uint32_t my_tick_get_cb(void) {
-    return time_us_32() / 1000; // Renvoie le temps en millisecondes
+    return time_us_32() / 1000;
 }
 
 int main()
@@ -37,13 +40,17 @@ int main()
 
     micro_dwm_init();
     micro_app_t *iterm = create_micro_term("Tminal");
+    micro_change_desktop(1);
+    micro_app_t *term = create_micro_term("iTerm");
     micro_set_output(OUT_SCREEN);
+    micro_set_focus(iterm);
     micro_puts("~ $ fastfetch\n");
     micro_puts(".-.-.-..-.,-.\n");
     micro_puts("| | | || . < \n");
     micro_puts("`-----'`-'`-'\n");
     micro_puts("CPU : Pico 2\nScreen : ILI9341 320x240\nOS : micro_os\nFont : JetBrains Mono 14\nBest language : C\n");
     micro_puts("~ $ _");
+    micro_set_focus(term);
 
     while (1)
     {

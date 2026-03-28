@@ -18,6 +18,7 @@ add_executable(micro_os
     src/micro_dwm/micro_dwm.c
     src/themes/theme.c
     src/jb_mono_14.c
+    src/inputs/mouse.c
 )
 
 pico_enable_stdio_usb(micro_os 1)
@@ -43,6 +44,7 @@ target_include_directories(micro_os PRIVATE
     src/micro_term
     src/micro_dwm
     src/themes
+    src/inputs
 )
 
 pico_add_extra_outputs(micro_os)

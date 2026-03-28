@@ -1,10 +1,12 @@
 #include "lvgl/lvgl.h"
 #include "micro_lib.h"
 #include "micro_term.h"
+#include "mouse.h"
 #include <src/core/lv_obj.h>
 #include <src/core/lv_obj_pos.h>
 #include <src/core/lv_obj_style.h>
 #include <src/core/lv_obj_style_gen.h>
+#include <src/core/lv_obj_tree.h>
 #include <src/font/lv_symbol_def.h>
 #include <src/layouts/flex/lv_flex.h>
 #include <src/micro_dwm/micro_dwm.h>
@@ -106,6 +108,7 @@ void init_window_area(int id)
 void micro_dwm_init(void)
 {
     init_themes();
+    //init_mouse();
     tile_container = lv_tileview_create(lv_scr_act());
     desktops[0].desktop = lv_tileview_add_tile(tile_container, 0, 0, LV_DIR_RIGHT);
     desktops[1].desktop = lv_tileview_add_tile(tile_container, 1, 0, LV_DIR_HOR);
@@ -179,6 +182,16 @@ void micro_set_focus(micro_app_t *app)
     micro_change_desktop(app->desktop);
 }
 
+static void btn_close(lv_event_t * e) {
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * btn = lv_event_get_target(e);
+
+    if(code == LV_EVENT_CLICKED) {
+        click_mouse(false);
+        close_micro_app(focus);
+    }
+}
+
 micro_app_t *create_micro_app(const char *title)
 {
     if (app_ptr > MAX_APPS - 1) return NULL;
@@ -195,6 +208,7 @@ micro_app_t *create_micro_app(const char *title)
     lv_obj_t *btn = lv_win_add_button(app->window, LV_SYMBOL_CLOSE, 14);
     lv_obj_set_height(btn, 14);
     lv_obj_set_style_radius(btn, 2, 0);
+    lv_obj_add_event_cb(btn, btn_close, LV_EVENT_ALL, NULL);
 
     lv_obj_t *header = lv_win_get_header(app->window);
     lv_obj_set_height(header, 20);
